@@ -36,3 +36,9 @@ validar a API). Cobertura de testes mínima: 80% dos métodos.
 6. Não deixe de adicionar a documentação da API com base no OpenAPI 3.0.
 7. Escolha a solução de autenticação que achar mais interessante. Crie pelo menos dois
 usuários/jogadores.
+
+## Execução
+
+```java
+mvn spring-boot:run
+```

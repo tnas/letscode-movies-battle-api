@@ -1,20 +1,32 @@
-package com.tnas.moviesbattleapi.domain;
+package com.tnas.moviesbattleapi.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
+@Table(name = "TB_MOVIE")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
+	@Id
+	@Column(name = "ID")
 	@JsonProperty("imdbID")
 	private String id;
 	
+	@Column(name = "ANO")
 	@JsonProperty("Year")
 	private Integer ano;
 	
+	@Column(name = "TITULO")
 	@JsonProperty("Title")
 	private String titulo;
 	
+	@Column(name = "NOTA")
 	private Double nota;
 
 	public String getId() {

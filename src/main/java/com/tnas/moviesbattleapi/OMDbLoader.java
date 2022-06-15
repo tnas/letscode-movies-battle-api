@@ -1,32 +1,34 @@
 package com.tnas.moviesbattleapi;
 
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.tnas.moviesbattleapi.domain.OMDbResult;
+import com.tnas.moviesbattleapi.model.OMDbSearch;
+import com.tnas.moviesbattleapi.service.MovieService;
 
 @Component
 public class OMDbLoader implements ApplicationRunner {
 
+	private static final Integer OMDB_MOVIES_PAGES = 3;
+	private static final String OMBD_URL_FORMAT = "http://www.omdbapi.com/?s=\"and\"&page=%d&type=movie&apikey=dad01f0b";
+	
+	@Autowired
+	private MovieService movieService;
+	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>");
-		System.out.println(">>>>>>>>>>Running after booting application!!!!!!!!");
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>");
-		
-		var url = "http://www.omdbapi.com/?s=\"and\"&page=1&type=movie&apikey=NONENONE";
 		var restTemplate = new RestTemplate();
-		var omdbResult = restTemplate.getForObject(url, OMDbResult.class);
-		System.out.println(omdbResult.toString());
-		Stream.of(omdbResult.getMovies()).forEach(m -> {
-			System.out.println(m.toString());
-		});
 		
+		IntStream.rangeClosed(1, OMDB_MOVIES_PAGES).forEach(p -> {
+			var omdbResult = restTemplate.getForObject(String.format(OMBD_URL_FORMAT, p), OMDbSearch.class);
+			this.movieService.saveMovies(Arrays.asList(omdbResult.getMovies()));
+		});
 	}
-
 }

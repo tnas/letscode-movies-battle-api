@@ -1,4 +1,4 @@
-package com.tnas.moviesbattleapi.domain;
+package com.tnas.moviesbattleapi.model;
 
 import java.util.Arrays;
 
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OMDbResult {
+public class OMDbSearch {
 
 	@JsonProperty("Search")
 	private Movie[] movies;
@@ -32,7 +32,7 @@ public class OMDbResult {
 
 	@Override
 	public String toString() {
-		return "OMDbResult [movies=" + Arrays.toString(movies) + ", total=" + total + "]";
+		return "OMDbSearch [movies=" + Arrays.toString(movies) + ", total=" + total + "]";
 	}
 	
 }

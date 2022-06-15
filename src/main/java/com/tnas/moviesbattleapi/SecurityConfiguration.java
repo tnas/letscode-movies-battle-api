@@ -25,6 +25,8 @@ import org.springframework.security.provisioning.UserDetailsManager;
 public class SecurityConfiguration  {
 	
 	private static final String USER_ROLE = "USER";
+	private static final Integer USERNAME_REGISTER = 0;
+	private static final Integer PASSWORD_REGISTER = 1;
 	
 	private static final String[][] registeredUsers = { 
 			{ "shiva", "{bcrypt}$2a$10$uaAnEplLKKtFqf1wj4YX.eW5aSEFJ9ugVKpD6hoExgIlBvZHO3lhm" }, 
@@ -50,8 +52,8 @@ public class SecurityConfiguration  {
 		Stream.of(registeredUsers).forEach(u -> {
 			
 			UserDetails user = User.builder()
-					.username(u[0])
-					.password(u[1])
+					.username(u[USERNAME_REGISTER])
+					.password(u[PASSWORD_REGISTER])
 					.roles(USER_ROLE)
 					.build();
 			users.createUser(user);

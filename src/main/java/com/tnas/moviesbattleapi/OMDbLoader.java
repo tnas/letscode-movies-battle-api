@@ -1,4 +1,4 @@
-package com.tnas.moviesbattleapi.boot;
+package com.tnas.moviesbattleapi;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;

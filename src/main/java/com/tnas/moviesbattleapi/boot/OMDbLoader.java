@@ -1,4 +1,4 @@
-package com.tnas.moviesbattleapi;
+package com.tnas.moviesbattleapi.boot;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
@@ -15,7 +15,7 @@ import com.tnas.moviesbattleapi.service.MovieService;
 @Component
 public class OMDbLoader implements ApplicationRunner {
 
-	private static final Integer OMDB_MOVIES_PAGES = 3;
+	private static final Integer OMDB_MOVIES_PAGES = 5;
 	private static final String OMBD_URL_FORMAT = "http://www.omdbapi.com/?s=\"and\"&page=%d&type=movie&apikey=dad01f0b";
 	
 	@Autowired

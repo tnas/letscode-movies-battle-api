@@ -8,5 +8,5 @@ import com.tnas.moviesbattleapi.model.Quiz;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
-	public List<Quiz> findByUsuarioAndErrosLessThanEqual(String usuario, Integer erros);
+	List<Quiz> findByUsuarioAndErrosLessThanEqual(String usuario, Integer erros);
 }

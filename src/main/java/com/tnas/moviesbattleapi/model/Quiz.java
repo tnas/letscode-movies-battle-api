@@ -1,5 +1,6 @@
 package com.tnas.moviesbattleapi.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -33,8 +34,17 @@ public class Quiz {
 	           fetch = FetchType.EAGER)
 	private List<Match> rodadas;
 	
+	public Quiz() {
+		this.rodadas = new ArrayList<>();
+		this.erros = 0;
+	}
+	
 	public Boolean isActiveByErrors() {
 		return this.erros <= MAX_ERRORS_ALLOWED;
+	}
+	
+	public void addMatch(Match match) {
+		this.rodadas.add(match);
 	}
 
 	public Long getId() {

@@ -1,17 +1,16 @@
 package com.tnas.moviesbattleapi.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.tnas.moviesbattleapi.converter.MatchConverter;
 import com.tnas.moviesbattleapi.dto.MatchDTO;
 import com.tnas.moviesbattleapi.dto.RankDTO;
-import com.tnas.moviesbattleapi.model.Match;
 import com.tnas.moviesbattleapi.model.Quiz;
 import com.tnas.moviesbattleapi.repository.QuizRepository;
 import com.tnas.moviesbattleapi.repository.UserRepository;
@@ -19,6 +18,9 @@ import com.tnas.moviesbattleapi.repository.UserRepository;
 @Service
 public class QuizService {
 
+	@Autowired
+	private MatchService matchService;
+	
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -29,25 +31,40 @@ public class QuizService {
 		
 		var quizzes = this.quizRepository.findByUsuarioAndErrosLessThanEqual(username, Quiz.MAX_ERRORS_ALLOWED);
 		
-		if (Objects.nonNull(quizzes)) {
-			
-			var quiz = quizzes.get(0);
-			Match match = quiz.getRodadas().stream().filter(m -> Objects.isNull(m.getRespostaCerta()))
-				.findFirst().orElse(null);
-			
-			var matchDto = new MatchDTO();
-			matchDto.setUsuario(username);
-			matchDto.setQuizId(quiz.getId());
-			matchDto.setIdFilme1(match.getPrimeiroFilme().getId());
-			matchDto.setTituloFilme1(match.getPrimeiroFilme().getTitulo());
-			matchDto.setIdFilme2(match.getSegundoFilme().getId());
-			matchDto.setTituloFilme2(match.getSegundoFilme().getTitulo());
-			
-			return matchDto;
+		if (CollectionUtils.isEmpty(quizzes)) { 
+			return this.instantiateQuiz(username);
 		}
-		else {
-			return null;
+		else { // Encontrado um quiz cujo número máximo de erros não foi atingido.
+			var quiz = CollectionUtils.firstElement(quizzes); // Só é permitido haver um único quiz nessa condição
+			
+			var newQuizMatch = this.matchService.getNewQuizMatch(quiz);
+			
+			if (Objects.isNull(newQuizMatch)) { // Não foi possível gerar um novo par de filmes
+				return this.instantiateQuiz(username);
+			}
+			else {
+				return MatchConverter.getDto(newQuizMatch);
+			}
 		}
+	}
+	
+	/**
+	 * Um novo {@link Quiz} precisa ser gerado quando: (1) Não é encontrado um quiz
+	 * cujo número máximo de erros não tenha sido atingido, ou (2) Não foi possível 
+	 * gerar um novo par de filmes sem repetições (conforme regras de negócio) para um quiz.
+	 * 
+	 * @param username - Usuário 
+	 * 
+	 * @return {@link MatchDTO}
+	 */
+	private MatchDTO instantiateQuiz(String username) {
+		
+		var newQuiz = new Quiz();
+		
+		newQuiz.setUsuario(username);
+		newQuiz = this.quizRepository.save(newQuiz);
+		
+		return MatchConverter.getDto(this.matchService.getNewQuizMatch(newQuiz));
 	}
 	
 	public List<RankDTO> getRanking() {

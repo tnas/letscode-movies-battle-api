@@ -1,4 +1,4 @@
-package com.tnas.moviesbattleapi;
+package com.tnas.moviesbattleapi.config;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -15,7 +15,7 @@ import com.tnas.moviesbattleapi.model.OMDbSearch;
 import com.tnas.moviesbattleapi.service.MovieService;
 
 @Component
-public class OMDbLoader implements ApplicationRunner {
+public class OMDbDataConfiguration implements ApplicationRunner {
 
 	private static final Integer OMDB_MOVIES_PAGES = 5;
 	private static final String OMBD_FIND_BY_PATTERN_QUERY = "http://www.omdbapi.com/?s=\"and\"&page=%d&type=movie&apikey=dad01f0b";

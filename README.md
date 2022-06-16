@@ -43,4 +43,12 @@ usuários/jogadores.
 - **username:** brahma / **password:** brahma@brahma
 - **username:** vixenu / **password:** vixenu@vixenu
 - **username:** krishna / **password:** krishna@krishna 
-- **username:** devi / **password:** devi@devi  
+- **username:** devi / **password:** devi@devi
+
+## Documentação da API
+
+Com a aplicação em execução, acesse a documentação da API através da URL
+[http://localhost:8080/movies-battle/swagger-ui/](http://localhost:8080/movies-battle/swagger-ui/).
+
+Será solicitada a autenticação. Um dos usuários listados na seção anterior podem ser utilizados.
+  

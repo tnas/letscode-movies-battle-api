@@ -1,4 +1,4 @@
-package com.tnas.moviesbattleapi;
+package com.tnas.moviesbattleapi.config;
 
 import java.util.stream.Stream;
 

@@ -37,8 +37,10 @@ validar a API). Cobertura de testes mínima: 80% dos métodos.
 7. Escolha a solução de autenticação que achar mais interessante. Crie pelo menos dois
 usuários/jogadores.
 
-## Execução
+## Usuários Cadastrados
 
-```java
-mvn spring-boot:run
-```
+- **username:** shiva / **password:** shiva@shiva
+- **username:** brahma / **password:** brahma@brahma
+- **username:** vixenu / **password:** vixenu@vixenu
+- **username:** krishna / **password:** krishna@krishna 
+- **username:** devi / **password:** devi@devi  

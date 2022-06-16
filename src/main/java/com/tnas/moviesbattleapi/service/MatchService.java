@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tnas.moviesbattleapi.dto.SolutionMatchDTO;
 import com.tnas.moviesbattleapi.model.Match;
 import com.tnas.moviesbattleapi.model.Quiz;
 import com.tnas.moviesbattleapi.repository.MatchRepository;
@@ -18,7 +19,7 @@ public class MatchService {
 	
 	@Autowired
 	private MovieRepository movieRepository;
-	
+		
 	public Match getNewQuizMatch(Quiz quiz) {
 		
 		var unsolvedMatch = this.matchRepository.findUnsolvedMatch(quiz.getUsuario());
@@ -56,5 +57,23 @@ public class MatchService {
 	
 	public void removeUnsolvedMatches(String username) {
 		this.matchRepository.deleteUnsolvedMatches(username);
+	}
+	
+	/**
+	 * Persiste a solução do {@link Match} informada. Retorna
+	 * sucesso ou falha da solução.
+	 * 
+	 * @param solution - {@link SolutionMatchDTO}
+	 * 
+	 * @return true, se a solução foi correta; false, caso contrário
+	 */
+	public Boolean solveMatch(SolutionMatchDTO solution) {
+		
+		var persistedMatch = this.matchRepository.findById(solution.getMatchId()).orElse(null);
+		var hitSolution = solution.getResposta() == persistedMatch.getSolution();
+		persistedMatch.setRespostaCerta(hitSolution);
+		this.matchRepository.save(persistedMatch);
+		
+		return hitSolution;
 	}
 }

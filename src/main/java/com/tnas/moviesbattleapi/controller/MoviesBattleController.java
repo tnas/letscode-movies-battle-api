@@ -6,12 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tnas.moviesbattleapi.dto.MatchDTO;
-import com.tnas.moviesbattleapi.dto.RankDTO;
+import com.tnas.moviesbattleapi.dto.SolutionMatchDTO;
+import com.tnas.moviesbattleapi.model.Rank;
 import com.tnas.moviesbattleapi.service.MatchService;
 import com.tnas.moviesbattleapi.service.QuizService;
+import com.tnas.moviesbattleapi.service.RankService;
 
 @RestController
 public class MoviesBattleController {
@@ -21,10 +25,26 @@ public class MoviesBattleController {
 	
 	@Autowired
 	private MatchService matchService;
+	
+	@Autowired
+	private RankService rankService;
 
     @GetMapping("/start")
     public MatchDTO startQuiz(Principal principal) {
+    	this.rankService.createRank(principal.getName());
         return this.quizService.getNewQuizMatch(principal.getName());
+    }
+    
+    @PostMapping("/solve")
+    public String solveMatch(Principal principal, @RequestBody SolutionMatchDTO solution) {
+    	
+    	var solutionMessage = this.matchService.solveMatch(solution) ?
+    			"Parabéns! Você acerto o filme com maior pontuação." :
+    				"Infelizmente você não acertou o filme com maior pontuação";
+    	
+    	this.rankService.updateRank(principal.getName());
+    	
+    	return solutionMessage;
     }
     
     @GetMapping("/next")
@@ -40,8 +60,8 @@ public class MoviesBattleController {
     }
     
     @GetMapping("/ranking")
-    public List<RankDTO> getRanking() {
-        return this.quizService.getRanking();
+    public List<Rank> getRanking() {
+        return this.rankService.getRanking();
     }
 
 }

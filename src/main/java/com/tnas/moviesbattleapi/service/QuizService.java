@@ -1,6 +1,5 @@
 package com.tnas.moviesbattleapi.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,19 +9,14 @@ import org.springframework.util.CollectionUtils;
 
 import com.tnas.moviesbattleapi.converter.MatchConverter;
 import com.tnas.moviesbattleapi.dto.MatchDTO;
-import com.tnas.moviesbattleapi.dto.RankDTO;
 import com.tnas.moviesbattleapi.model.Quiz;
 import com.tnas.moviesbattleapi.repository.QuizRepository;
-import com.tnas.moviesbattleapi.repository.UserRepository;
 
 @Service
 public class QuizService {
 
 	@Autowired
 	private MatchService matchService;
-	
-	@Autowired
-	private UserRepository userRepository;
 	
 	@Autowired
 	private QuizRepository quizRepository;
@@ -67,34 +61,7 @@ public class QuizService {
 		return MatchConverter.getDto(this.matchService.getNewQuizMatch(newQuiz));
 	}
 	
-	public List<RankDTO> getRanking() {
-
-		var ranking = new ArrayList<RankDTO>();
-		
-//		this.userRepository.findAll().stream().forEach(u -> {
-//			
-//				var answeredQuizzes = this.quizRepository.findByUsuario(u);
-//				
-//				var numQuizzes = answeredQuizzes.size();
-//				
-//				var numMatches = answeredQuizzes.stream()
-//						.map(Quiz::getRodadas)
-//						.flatMap(Collection::stream)
-//						.count();
-//				
-//				var hitMatches = answeredQuizzes.stream()
-//						.map(Quiz::getRodadas)
-//						.flatMap(Collection::stream)
-//						.filter(m -> m.getRespostaCerta())
-//						.count();
-//				
-//				ranking.add(new RankDTO(u.getUsername(),
-//						(double)(numQuizzes * (hitMatches / numMatches))));
-//			});
-		
-		return ranking;
-		
+	public List<Quiz> getUserQuizzes(String username) {
+		return this.quizRepository.findByUsuario(username);
 	}
-	
-
 }

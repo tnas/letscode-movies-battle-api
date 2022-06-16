@@ -6,6 +6,8 @@ public class MatchDTO {
 	
 	private Long quizId;
 	
+	private Long matchId;
+	
 	private String tituloFilme1;
 	
 	private String idFilme1;
@@ -14,8 +16,6 @@ public class MatchDTO {
 	
 	private String idFilme2;
 	
-	private String solucao;
-
 	public String getUsuario() {
 		return usuario;
 	}
@@ -64,12 +64,12 @@ public class MatchDTO {
 		this.idFilme2 = idFilme2;
 	}
 
-	public String getSolucao() {
-		return solucao;
+	public Long getMatchId() {
+		return matchId;
 	}
 
-	public void setSolucao(String solucao) {
-		this.solucao = solucao;
+	public void setMatchId(Long matchId) {
+		this.matchId = matchId;
 	}
 	
 }

@@ -11,6 +11,7 @@ public class MatchConverter {
 		
 		matchDto.setUsuario(match.getPartida().getUsuario());
 		matchDto.setQuizId(match.getPartida().getId());
+		matchDto.setMatchId(match.getId());
 		matchDto.setIdFilme1(match.getPrimeiroFilme().getId());
 		matchDto.setTituloFilme1(match.getPrimeiroFilme().getTitulo());
 		matchDto.setIdFilme2(match.getSegundoFilme().getId());

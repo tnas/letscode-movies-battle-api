@@ -1,5 +1,10 @@
 package com.tnas.moviesbattleapi.model;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
+	private static final NumberFormat numberFormat = NumberFormat.getInstance(Locale.getDefault()); 
+	
 	@Id
 	@Column(name = "ID")
 	@JsonProperty("imdbID")
@@ -27,7 +34,31 @@ public class Movie {
 	private String titulo;
 	
 	@Column(name = "NOTA")
-	private Double nota;
+	@JsonProperty("imdbRating")
+	private String nota;
+	
+	@Column(name = "VOTOS")
+	@JsonProperty("imdbVotes")
+	private String votos;
+	
+	@Column(name = "PONTUACAO")
+	private Double pontuacao;
+	
+	public void calcularPontuacao() {
+		
+		try {
+			if (Objects.nonNull(this.nota) && Objects.nonNull(this.votos)) {
+				this.pontuacao = numberFormat.parse(this.nota).doubleValue()  * 
+					numberFormat.parse(this.votos).doubleValue();
+			}
+			else {
+				this.pontuacao = 0d;
+			}
+		}
+		catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public String getId() {
 		return id;
@@ -53,12 +84,28 @@ public class Movie {
 		this.titulo = titulo;
 	}
 
-	public Double getNota() {
+	public String getNota() {
 		return nota;
 	}
 
-	public void setNota(Double nota) {
+	public void setNota(String nota) {
 		this.nota = nota;
+	}
+
+	public String getVotos() {
+		return votos;
+	}
+
+	public void setVotos(String votos) {
+		this.votos = votos;
+	}
+
+	public Double getPontuacao() {
+		return pontuacao;
+	}
+
+	public void setPontuacao(Double pontuacao) {
+		this.pontuacao = pontuacao;
 	}
 
 	@Override

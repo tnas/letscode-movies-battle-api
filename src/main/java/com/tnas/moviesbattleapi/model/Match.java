@@ -36,6 +36,11 @@ public class Match {
 		return (primeiroFilme.equals(st) && segundoFilme.equals(nd)) ||
 				(primeiroFilme.equals(nd) && segundoFilme.equals(st));
 	}
+	
+	public Solution getSolution() {
+		return this.primeiroFilme.getPontuacao() > this.segundoFilme.getPontuacao() ?
+				Solution.PRIMEIRO_FILME : Solution.SEGUNDO_FILME;
+	}
 
 	public Long getId() {
 		return id;

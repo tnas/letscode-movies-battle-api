@@ -29,6 +29,11 @@ public class MoviesBattleController {
 	@Autowired
 	private RankService rankService;
 
+	@GetMapping("/")
+    public String login(Principal principal) {
+        return principal.getName();
+    }
+	
     @GetMapping("/start")
     public MatchDTO startQuiz(Principal principal) {
     	this.rankService.createRank(principal.getName());

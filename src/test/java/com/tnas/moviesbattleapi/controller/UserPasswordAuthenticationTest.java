@@ -9,7 +9,6 @@ import java.net.URL;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -21,27 +20,35 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class UserPasswordAuthenticationTest {
 
-	@Autowired
+	private static final String HOST = "http://localhost:";
+	private static final String APP = "/movies-battle";
+	private static final String TEST_USER = "shiva";
+	private static final String TEST_PASS = "shiva@shiva";
+	
 	private TestRestTemplate restTemplate;
 	
-	private URL base;
+	private String baseUrl;
 	
 	@LocalServerPort
 	private int port;
 	
 	@BeforeEach
-	public void setUp() throws MalformedURLException {
-		this.base = new URL("http://localhost:".concat(String.valueOf(this.port).concat("/movies-battle/start")));
+	public void init() throws MalformedURLException {
+		this.restTemplate = new TestRestTemplate(TEST_USER, TEST_PASS);
+		this.baseUrl = new URL(HOST + String.valueOf(this.port) + APP).toString();
 	}
 	
     @Test
     void whenLoggedUserRequestsContextPath_ThenSuccess() throws IllegalStateException, IOException {
-    	
-    	ResponseEntity<String> response = restTemplate.
-    			withBasicAuth("shiva", "shiva@shiva").getForEntity(base.toString(), String.class);
- 
-        assertEquals(HttpStatus.OK, response.getStatusCode(), base.toString());
-        System.out.println(response);
+    	ResponseEntity<String> response = restTemplate.getForEntity(baseUrl, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("shiva"));
+    }
+    
+    @Test
+    void whenUserWithWrongPassword_ThenUnauthorized() throws IllegalStateException, IOException {
+    	restTemplate = new TestRestTemplate(TEST_USER, "wrongPassword");
+    	ResponseEntity<String> response = restTemplate.getForEntity(baseUrl, String.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }

@@ -10,19 +10,11 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * As senhas dos usuários cadastrados seguem o formato: username@username.
- * Por exemplo, a senha do usuário "teste" é "teste@teste".
- *  
- * @author Thiago Nascimento - nascimenthiago@gmail.com
- *
- */
 @Configuration
 public class SecurityConfiguration  {
 	
@@ -30,7 +22,7 @@ public class SecurityConfiguration  {
 	private static final Integer USERNAME_REGISTER = 0;
 	private static final Integer PASSWORD_REGISTER = 1;
 	
-	private static final String[][] registeredUsers = { 
+	private static final String[][] defaultUsersData = { 
 			{ "shiva", "{bcrypt}$2a$10$uaAnEplLKKtFqf1wj4YX.eW5aSEFJ9ugVKpD6hoExgIlBvZHO3lhm" }, 
 			{ "brahma", "{bcrypt}$2a$10$BLQzG6MzB/TEXMXUpZf6Fu3ywPzcgOCHwEpcLkHDXGT6YdriSqeqm"},
 			{ "vixenu", "{bcrypt}$2a$10$Odljo1DgweoS4pwSHYNTpe.aA8qkYdrxqte02NVSIN2QXEZ3zF5kO"}, 
@@ -48,20 +40,9 @@ public class SecurityConfiguration  {
 	
     @Bean
     public UserDetailsManager users(DataSource dataSource) {
-    	
-    	JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-    	
-		Stream.of(registeredUsers).forEach(u -> {
-			
-			UserDetails user = User.builder()
-					.username(u[USERNAME_REGISTER])
-					.password(u[PASSWORD_REGISTER])
-					.roles(USER_ROLE)
-					.build();
-			users.createUser(user);
-		});
-        
-        return users;
+    	JdbcUserDetailsManager usersManager = new JdbcUserDetailsManager(dataSource);
+    	this.loadDefaultUsers(usersManager);
+        return usersManager;
     }
     
     @Bean
@@ -72,5 +53,15 @@ public class SecurityConfiguration  {
             .and()
             .httpBasic();
         return http.build();
+    }
+    
+    private void loadDefaultUsers(UserDetailsManager usersManager) {
+    	Stream.of(defaultUsersData)
+    		.map(register -> User.builder()
+    			.username(register[USERNAME_REGISTER])
+    			.password(register[PASSWORD_REGISTER])
+    			.roles(USER_ROLE)
+    			.build())
+    		.forEach(usersManager::createUser); 
     }
 }

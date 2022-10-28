@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tnas.moviesbattleapi.dto.MatchDTO;
 import com.tnas.moviesbattleapi.dto.SolutionMatchDTO;
+import com.tnas.moviesbattleapi.model.MoviesBattleUser;
 import com.tnas.moviesbattleapi.model.Rank;
 import com.tnas.moviesbattleapi.service.MatchService;
 import com.tnas.moviesbattleapi.service.QuizService;
 import com.tnas.moviesbattleapi.service.RankService;
+import com.tnas.moviesbattleapi.service.UserService;
 
 @RestController
 public class MoviesBattleController {
@@ -28,19 +30,28 @@ public class MoviesBattleController {
 	
 	@Autowired
 	private RankService rankService;
+	
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/")
     public String login(Principal principal) {
         return principal.getName();
     }
 	
-    @GetMapping("/start")
+	@PostMapping("/signup")
+	public String createUser(@RequestBody MoviesBattleUser user) {
+		this.userService.addUser(user);
+		return user.username();
+	}
+	
+    @GetMapping("/match/start")
     public MatchDTO startQuiz(Principal principal) {
     	this.rankService.createRank(principal.getName());
         return this.quizService.getNewQuizMatch(principal.getName());
     }
     
-    @PostMapping("/solve")
+    @PostMapping("/match/solve")
     public String solveMatch(Principal principal, @RequestBody SolutionMatchDTO solution) {
     	
     	var solutionMessage = this.matchService.solveMatch(solution) ?
@@ -52,21 +63,20 @@ public class MoviesBattleController {
     	return solutionMessage;
     }
     
-    @GetMapping("/next")
+    @GetMapping("/match/next")
     public MatchDTO getNextQuizMatch(Principal principal) {
         return this.quizService.getNewQuizMatch(principal.getName());
     }
 
-    @GetMapping("/stop")
+    @GetMapping("/match/stop")
     public String stopQuiz(Principal principal) {
     	this.matchService.removeUnsolvedMatches(principal.getName());
     	SecurityContextHolder.getContext().setAuthentication(null);
         return String.format("Quiz do usuário '%s' foi finalizado com sucesso.", principal.getName());
     }
     
-    @GetMapping("/ranking")
+    @GetMapping("/match/ranking")
     public List<Rank> getRanking() {
         return this.rankService.getRanking();
     }
-
 }

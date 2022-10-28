@@ -51,4 +51,11 @@ class UserPasswordAuthenticationTest {
     	ResponseEntity<String> response = restTemplate.getForEntity(baseUrl, String.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
+    
+    @Test
+    void whenCreateNewUser_ThenAuthorizedSuccess() throws IllegalStateException, IOException {
+    	restTemplate = new TestRestTemplate();
+    	ResponseEntity<String> response = restTemplate.getForEntity(baseUrl, String.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
 }

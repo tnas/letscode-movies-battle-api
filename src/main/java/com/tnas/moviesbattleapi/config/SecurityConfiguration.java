@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfiguration  {
 	
-	private static final String USER_ROLE = "USER";
+	public static final String USER_ROLE = "USER";
 	private static final Integer USERNAME_REGISTER = 0;
 	private static final Integer PASSWORD_REGISTER = 1;
 	
@@ -48,9 +48,13 @@ public class SecurityConfiguration  {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .anyRequest()
-            .authenticated()
-            .and()
+        	.antMatchers("/match/**")
+        	.authenticated()
+        	.and()
+        	.authorizeRequests()
+            .antMatchers("/signup")
+            .permitAll()
+            .and().csrf().disable()
             .httpBasic();
         return http.build();
     }

@@ -7,13 +7,19 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 
@@ -38,6 +44,7 @@ class UserPasswordAuthenticationTest {
 		this.baseUrl = new URL(HOST + String.valueOf(this.port) + APP).toString();
 	}
 	
+	@Order(1)
     @Test
     void whenLoggedUserRequestsContextPath_ThenSuccess() throws IllegalStateException, IOException {
     	ResponseEntity<String> response = restTemplate.getForEntity(baseUrl, String.class);
@@ -45,6 +52,7 @@ class UserPasswordAuthenticationTest {
         assertTrue(response.getBody().contains("shiva"));
     }
     
+	@Order(2)
     @Test
     void whenUserWithWrongPassword_ThenUnauthorized() throws IllegalStateException, IOException {
     	restTemplate = new TestRestTemplate(TEST_USER, "wrongPassword");
@@ -52,10 +60,27 @@ class UserPasswordAuthenticationTest {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
     
+    @Order(3)
     @Test
-    void whenCreateNewUser_ThenAuthorizedSuccess() throws IllegalStateException, IOException {
+    void whenCreateNewUser_ThenAuthorizedSuccess() throws IllegalStateException, IOException, JSONException {
+    	
+    	var httpHeaders = new HttpHeaders();
+    	httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+    	
+    	var jsonUser = new JSONObject();
+    	jsonUser.put("username", "tnas");
+    	jsonUser.put("password", "tnas@tnas");
+    	
+    	var request = new HttpEntity<String>(jsonUser.toString(), httpHeaders);
+    	
     	restTemplate = new TestRestTemplate();
-    	ResponseEntity<String> response = restTemplate.getForEntity(baseUrl, String.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    	var response = restTemplate.postForEntity(baseUrl.concat("/signup"), request, String.class);
+    	
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody().contains("tnas"));
+        
+        restTemplate = new TestRestTemplate("tnas", "tnas@tnas");
+    	var getResponse = restTemplate.getForEntity(baseUrl, String.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
 }

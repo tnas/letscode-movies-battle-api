@@ -35,8 +35,8 @@ public class MoviesBattleController {
 	private UserService userService;
 
 	@GetMapping("/")
-    public String login(Principal principal) {
-        return principal.getName();
+    public String home() {
+        return "Movies Battle API";
     }
 	
 	@PostMapping("/signup")
@@ -55,7 +55,7 @@ public class MoviesBattleController {
     public String solveMatch(Principal principal, @RequestBody SolutionMatchDTO solution) {
     	
     	var solutionMessage = this.matchService.solveMatch(solution) ?
-    			"Parabéns! Você acerto o filme com maior pontuação." :
+    			"Parabéns! Você acertou o filme com maior pontuação." :
     				"Infelizmente você não acertou o filme com maior pontuação";
     	
     	this.rankService.updateRank(principal.getName());
